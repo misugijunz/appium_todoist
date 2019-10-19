@@ -1,0 +1,2 @@
+class Functionals():
+    pass
