@@ -8,8 +8,8 @@ parser.add_argument('--token', required=True)
 parser.add_argument('--module',
                     help='Function module to be tested eg: Projects',
                     default='projects')
-parser.add_argument('--email',
-                    help='email to log in to app', required=True)
+parser.add_argument('--username',
+                    help='email username to log in to app', required=True)
 parser.add_argument('--password',
                     help='email to log in to app', required=True)
 parsed_obj = parser.parse_args()
@@ -22,4 +22,4 @@ if __name__ == '__main__':
                                                 parsed_obj.username,
                                                 parsed_obj.password)
     runner = unittest.TextTestRunner()
-    runner(test_suite)
+    runner.run(test_suite)

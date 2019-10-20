@@ -2,9 +2,11 @@ import requests
 import uuid
 import json
 from .models import Projects, Dues, Tasks
-from abc import ABC, abstractmethod
+from abc import ABCMeta, abstractmethod
 
-class AbstractClient(ABC):
+class AbstractClient():
+    __metaclass__ = ABCMeta
+    
     def __init__(self, token):
         self.base_url = "https://api.todoist.com/rest/v1/"
         self.token = token
