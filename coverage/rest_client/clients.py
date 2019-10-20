@@ -1,19 +1,23 @@
 import requests
 import uuid
 import json
+from .models import Projects, Dues, Tasks
 from abc import ABC, abstractmethod
 
 class AbstractClient(ABC):
     def __init__(self, token):
         self.base_url = "https://api.todoist.com/rest/v1/"
         self.token = token
+        self.headers = {
+            "Authorization": "Bearer %s" % token
+        }
     
     @abstractmethod
-    def get_all(self):
+    def get_all(self, params=None):
         pass
     
     @abstractmethod
-    def get(self, params):
+    def get(self, id):
         pass
     
     @abstractmethod
@@ -21,27 +25,140 @@ class AbstractClient(ABC):
         pass
     
     @abstractmethod
-    def update(self, params):
+    def update(self, id, params):
         pass
     
     @abstractmethod
-    def delete(self, params):
+    def delete(self, id):
         pass
     
-    
-class ProjectsClients(AbstractClient):
+ 
+class ProjectsClient(AbstractClient):
 
-    def get_all(self):
-        pass
+    def get_all(self, params=None):
+        api_url = self.base_url + "projects"
+        projects_arr = requests.get(api_url,
+                                    headers=self.header).json()
+        projects = []
+        for project_dict in projects_arr:
+            project = self._create_project_instance(project_dict)
+            projects.append(project)
+        return projects
+        
     
-    def get(self, params):
-        pass
+    def get(self, id):
+        api_url = self.base_url + "projects"
+        api_url = api_url + "/" + id
+        project_dict = requests.get(api_url,
+                                    headers=self.header).json()
+        project = self._create_project_instance(project_dict)
+        return project
     
     def create(self, params):
-        pass
+        api_url = self.base_url + "projects"
+        _header = self.header
+        _header["Content-Type"] = "application/json"
+        _header["X-Request-Id"] = str(uuid.uuid4())
+        project_dict = requests.post(api_url,
+                                     data=json.dumps(params),
+                                     headers=_header).json()
+        project = self._create_project_instance(project_dict)
+        return project
+
+    def update(self, id, params):
+        api_url = self.base_url + "projects"
+        api_url = api_url + "/" + id
+        _header = self.header
+        _header["Content-Type"] = "application/json"
+        _header["X-Request-Id"] = str(uuid.uuid4())
+        resp = requests.post(api_url,
+                             data=json.dumps(params),
+                             headers=_header).json()
+        return resp
+
+    def delete(self, id):
+        api_url = self.base_url + "projects"
+        api_url = api_url + "/" + id
+        resp = projects_arr = requests.delete(api_url,
+                                              headers=self.header).json()
+        return resp
+        
+    def _create_project_instance(self, dict):
+        project = Projects(dict.id, dict.name,
+                           dict.parent, dict.order,
+                           dict.comment_count)
+        return project
+
+
+class TaskClient(AbstractClient):
+    def get_all(self, params):
+        api_url = self.base_url + "tasks"
+        tasks_arr = requests.get(api_url,
+                                 params=params,
+                                 headers=self.header).json()
+        tasks = []
+        for task_dict in tasks_arr:
+            task = self._create_project_instance(task_dict)
+            tasks.append(task)
+        return tasks
+        
     
-    def update(self, params):
-        pass
+    def get(self, id):
+        api_url = self.base_url + "tasks"
+        api_url = api_url + "/" + id
+        project_dict = requests.get(api_url,
+                                    headers=self.header).json()
+        project = self._create_project_instance(project_dict)
+        return project
     
-    def delete(self, params):
-        pass
+    def create(self, params):
+        api_url = self.base_url + "tasks"
+        _header = self.header
+        _header["Content-Type"] = "application/json"
+        _header["X-Request-Id"] = str(uuid.uuid4())
+        project_dict = requests.post(api_url,
+                                     data=json.dumps(params),
+                                     headers=_header).json()
+        project = self._create_project_instance(project_dict)
+        return project
+
+    def update(self, id, params):
+        api_url = self.base_url + "tasks"
+        api_url = api_url + "/" + id
+        _header = self.header
+        _header["Content-Type"] = "application/json"
+        _header["X-Request-Id"] = str(uuid.uuid4())
+        resp = requests.post(api_url,
+                             data=json.dumps(params),
+                             headers=_header).json()
+        return resp
+
+    def delete(self, id):
+        api_url = self.base_url + "tasks"
+        api_url = api_url + "/{}".format(id)
+        resp = requests.delete(api_url,
+                               headers=self.header).json()
+        return resp
+    
+    def close(self, id):
+        api_url = self.base_url + "tasks"
+        api_url = api_url + "/{}/close".format(id)
+        resp = requests.delete(api_url,
+                               headers=self.header).json()
+        return resp
+        
+    def _create_task_instance(self, dict):
+        due_dict = dict.due
+        _due = None
+        if due_dict is not None:
+            _due = self._create_due_instance(due_dict)
+        project = Tasks(dict.id, dict.project_id, dict.content,
+                        dict.completed, dict.label_ids,
+                        dict.parent, dict.order, dict.priority,
+                        _due, dict.url, dict.comment_count)
+        return project
+    
+    def _create_due_instance(self, dict):
+        due = Dues(dict.string, dict.date, dict.datetime,
+                    dict.timezone)
+        return due;
