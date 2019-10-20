@@ -90,7 +90,7 @@ class ProjectsClient(AbstractClient):
         return project
 
 
-class TaskClient(AbstractClient):
+class TasksClient(AbstractClient):
     def get_all(self, params):
         api_url = self.base_url + "tasks"
         tasks_arr = requests.get(api_url,
