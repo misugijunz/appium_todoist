@@ -4,6 +4,16 @@ import os
 
 from .helpers import ensure_dir
 
+TEST_CASES = {
+    "projects": [
+        "test_create_project"
+    ],
+    "tasks": [
+        "test_create_task_from_mobile_phone",
+        "test_reopen_task"
+    ]
+}
+
 
 def pytest_configure(config):
     if not hasattr(config, 'input'):
