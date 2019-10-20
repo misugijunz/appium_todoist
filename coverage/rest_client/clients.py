@@ -146,6 +146,13 @@ class TaskClient(AbstractClient):
         resp = requests.delete(api_url,
                                headers=self.header).json()
         return resp
+    
+    def reopen(self, id):
+        api_url = self.base_url + "tasks"
+        api_url = api_url + "/{}/reopen".format(id)
+        resp = requests.delete(api_url,
+                               headers=self.header).json()
+        return resp
         
     def _create_task_instance(self, dict):
         due_dict = dict.due
