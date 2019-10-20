@@ -10,7 +10,7 @@ class Projects():
     def __str__(self):
         return self.name
         
-class Due():
+class Dues():
     def __init__(self, string, date, 
                  datetime, timezone):
         self.string = string
