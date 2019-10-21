@@ -96,6 +96,7 @@ class ProjectsClient(AbstractClient):
 
 
 class TasksClient(AbstractClient):
+    
     def get_all(self, params):
         api_url = self.base_url + "tasks"
         tasks_arr = requests.get(api_url,
@@ -107,7 +108,6 @@ class TasksClient(AbstractClient):
             tasks.append(task)
         return tasks
         
-    
     def get(self, id):
         api_url = self.base_url + "tasks"
         api_url = api_url + "/" + id
@@ -160,17 +160,31 @@ class TasksClient(AbstractClient):
         return resp
         
     def _create_task_instance(self, dict):
-        due_dict = dict.due
+        due_dict = dict['due']
         _due = None
         if due_dict is not None:
             _due = self._create_due_instance(due_dict)
-        project = Tasks(dict.id, dict.project_id, dict.content,
-                        dict.completed, dict.label_ids,
-                        dict.parent, dict.order, dict.priority,
-                        _due, dict.url, dict.comment_count)
+        id = dict['id']
+        project_id = dict['project_id']
+        content = dict['content']
+        completed = dict['completed']
+        label_ids = dict['label_ids']
+        parent = dict['parent']
+        order = dict['order']
+        priority = dict['priority']
+        url = dict['url']
+        comment_count = dict['comment_count']
+        
+        project = Tasks(id, project_id, content,
+                        completed, label_ids,
+                        parent, order, priority,
+                        _due, url, comment_count)
         return project
     
     def _create_due_instance(self, dict):
-        due = Dues(dict.string, dict.date, dict.datetime,
-                    dict.timezone)
+        strin = dict['string']
+        date = dict['date']
+        datetime = dict['datetime']
+        timezone = dict['timezone']
+        due = Dues(strin, date, datetime, timezone)
         return due;
