@@ -1,7 +1,16 @@
 import unittest
+import os
+import copy
+import sys
 import random
 from ..rest_client.clients import ProjectsClient
+from ..helpers import ANDROID_BASE_CAPS, EXECUTOR
 from .functionals import Functionals
+
+from time import sleep
+from appium import webdriver
+from appium.webdriver.common.touch_action import TouchAction
+from selenium.common.exceptions import NoSuchElementException
 
 class FunctionalsProject(unittest.TestCase, Functionals):
     
@@ -13,8 +22,20 @@ class FunctionalsProject(unittest.TestCase, Functionals):
         obj.set_password(password)
         return obj
     
+    def _tap(self, el):
+        actions = TouchAction(self.driver)
+        actions.tap(el)
+        actions.perform()
+    
     def setUp(self):
         self.client = ProjectsClient(self.token)
+        self.driver = webdriver.Remote('http://localhost:4723/wd/hub',
+                                       ANDROID_BASE_CAPS)
+        self.driver.implicitly_wait(5000)
+        
+    def tearDown(self):
+        # end the session
+        self.driver.quit()
         
     def test_create_project(self):
         random_no = random.randint(1, 5000)
@@ -27,3 +48,22 @@ class FunctionalsProject(unittest.TestCase, Functionals):
         obj = self.client.create(params)
         self.assertEqual(project_name, obj.name,
                          assert_msg)
+        # Step 2: Login
+        # choose login by email
+        el = self.driver.find_element_by_id('btn_welcome_continue_with_email')
+        self._tap(el)
+        # fill username/email then continue
+        self.driver.find_element_by_id('email_exists_input').send_keys(self.username)
+        el = self.driver.find_element_by_id('btn_continue_with_email')
+        self._tap(el)
+        # fill password then log in
+        self.driver.find_element_by_id('log_in_password').send_keys(self.password)
+        el = self.driver.find_element_by_id('btn_log_in')
+        self._tap(el)
+        today_el_in_home_page = None
+        path = "//android.widget.TextView[@text='Today']"
+        today_el_in_home_page = self.driver.find_element_by_xpath(path)
+        # check login is successful by means of being in a home page contains "Today" text
+        self.assertTrue(today_el_in_home_page is not None)
+        
+
