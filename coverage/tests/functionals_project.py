@@ -38,6 +38,7 @@ class FunctionalsProject(unittest.TestCase, Functionals):
         self.driver.quit()
         
     def test_create_project(self):
+        # Step 1 Create test project via API
         random_no = random.randint(1, 5000)
         project_name = "Project_{}".format(random_no)
         assert_msg = "Generated project name should be same with test case: {}"
@@ -46,6 +47,7 @@ class FunctionalsProject(unittest.TestCase, Functionals):
             "name": project_name
         }
         obj = self.client.create(params)
+        # validate if generated project name is equal to returned object name from API
         self.assertEqual(project_name, obj.name,
                          assert_msg)
         # Step 2: Login
@@ -60,10 +62,25 @@ class FunctionalsProject(unittest.TestCase, Functionals):
         self.driver.find_element_by_id('log_in_password').send_keys(self.password)
         el = self.driver.find_element_by_id('btn_log_in')
         self._tap(el)
+        # check if home page is loaded so it means login is successful
         today_el_in_home_page = None
         path = "//android.widget.TextView[@text='Today']"
         today_el_in_home_page = self.driver.find_element_by_xpath(path)
         # check login is successful by means of being in a home page contains "Today" text
         self.assertTrue(today_el_in_home_page is not None)
         
-
+        # Step 3: Verify project is created in mobile app
+        # click and expand sidebar
+        el = self.driver.find_element_by_accessibility_id('Change the current view')
+        self._tap(el)
+        sleep(1.0)
+        # expand project menu list
+        path = "(//android.widget.ImageView[@content-desc='Expand/collapse'])[1]"
+        el = self.driver.find_element_by_xpath(path)
+        self._tap(el)
+        # set xpath search path with text of project_name
+        project_text_widget = None
+        path = "//android.widget.TextView[@text='{}']".format(project_name)
+        project_text_widget = self.driver.find_element_by_xpath(path)
+        # check if text widget of the project is found
+        self.assertTrue(project_text_widget is not None)
