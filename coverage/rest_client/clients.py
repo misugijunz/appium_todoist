@@ -104,7 +104,7 @@ class TasksClient(AbstractClient):
                                  headers=self.headers).json()
         tasks = []
         for task_dict in tasks_arr:
-            task = self._create_project_instance(task_dict)
+            task = self._create_task_instance(task_dict)
             tasks.append(task)
         return tasks
         
@@ -113,7 +113,7 @@ class TasksClient(AbstractClient):
         api_url = api_url + "/" + id
         project_dict = requests.get(api_url,
                                     headers=self.headers).json()
-        project = self._create_project_instance(project_dict)
+        project = self._create_task_instance(project_dict)
         return project
     
     def create(self, params):
@@ -124,7 +124,7 @@ class TasksClient(AbstractClient):
         project_dict = requests.post(api_url,
                                      data=json.dumps(params),
                                      headers=_header).json()
-        project = self._create_project_instance(project_dict)
+        project = self._create_task_instance(project_dict)
         return project
 
     def update(self, id, params):
@@ -160,20 +160,20 @@ class TasksClient(AbstractClient):
         return resp
         
     def _create_task_instance(self, dict):
-        due_dict = dict['due']
+        due_dict = dict.get('due')
         _due = None
         if due_dict is not None:
             _due = self._create_due_instance(due_dict)
-        id = dict['id']
-        project_id = dict['project_id']
-        content = dict['content']
-        completed = dict['completed']
-        label_ids = dict['label_ids']
-        parent = dict['parent']
-        order = dict['order']
-        priority = dict['priority']
-        url = dict['url']
-        comment_count = dict['comment_count']
+        id = dict.get('id')
+        project_id = dict.get('project_id')
+        content = dict.get('content')
+        completed = dict.get('completed')
+        label_ids = dict.get('label_ids')
+        parent = dict.get('parent')
+        order = dict.get('order')
+        priority = dict.get('priority')
+        url = dict.get('url')
+        comment_count = dict.get('comment_count')
         
         project = Tasks(id, project_id, content,
                         completed, label_ids,
@@ -182,9 +182,9 @@ class TasksClient(AbstractClient):
         return project
     
     def _create_due_instance(self, dict):
-        strin = dict['string']
-        date = dict['date']
-        datetime = dict['datetime']
-        timezone = dict['timezone']
+        strin = dict.get('string')
+        date = dict.get('date')
+        datetime = dict.get('datetime')
+        timezone = dict.get('timezone')
         due = Dues(strin, date, datetime, timezone)
         return due;
