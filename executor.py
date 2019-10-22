@@ -1,5 +1,6 @@
 import argparse
 import unittest
+import HtmlTestRunner
 from coverage.tests.functionals import FunctionalsUtil
 from coverage.configs import TEST_CASES
 
@@ -21,5 +22,6 @@ if __name__ == '__main__':
                                                 parsed_obj.token,
                                                 parsed_obj.username,
                                                 parsed_obj.password)
-    runner = unittest.TextTestRunner()
+    runner = HtmlTestRunner.HTMLTestRunner(output='test_report',combine_reports=True,
+                                           report_name="MyReport")
     runner.run(test_suite)
