@@ -99,22 +99,111 @@ class FunctionalsTask(unittest.TestCase, Functionals):
         path = "//android.widget.TextView[@text='{}']".format(task_message)
         task_text_widget = self.driver.find_elements_by_xpath(path)
         task_text_widget_size = len(task_text_widget)
-        print("hello {}".format(task_text_widget_size))
         self.assertEqual(task_text_widget_size, 1)
+        print("Task {} is created".format(task_message))
         
         # Step 2: Verify task is created through API
+        sleep(1.0)
         params = {
             "project_id": self.project.id
         }
         tasks = self.client.get_all(params)
+        sleep(1.0)
         found = False
         for task in tasks:
             if task.content == task_message:
                 found = True
+                print("Task is found through API")
                 break
         self.assertTrue(found)
 
     def test_reopen_task(self):
-        # TODO implement
-        self.assertTrue(True)
+        # Step 1: Open mobile application
+        activity = None
+        activity = self.driver.current_activity;
+        # assert if activity is loaded
+        self.assertTrue(activity is not None)
+        # login and prepare test project
+        self.login_to_homepage()
+        
+        # Step 2: Open test project
+        el = self.driver.find_element_by_accessibility_id('Change the current view')
+        self._tap(el)
+        sleep(1.0)
+        # expand project menu list
+        path = "(//android.widget.ImageView[@content-desc='Expand/collapse'])[1]"
+        el = self.driver.find_element_by_xpath(path)
+        self._tap(el)
+        # set xpath search path with text of project_name
+        project_text_widget = None
+        path = "//android.widget.TextView[@text='{}']".format(self.project_name)
+        project_text_widget = self.driver.find_element_by_xpath(path)
+        self._tap(project_text_widget)
+        # entered project view, search for header with project name to assert
+        project_title_text_count = len(self.driver.find_elements_by_xpath(path))
+        self.assertEqual(project_title_text_count, 1)
+        
+        # Step 3: Create test task
+        el = self.driver.find_element_by_id("fab")
+        self._tap(el)
+        # add message
+        random_no = random.randint(1, 5000)
+        task_message = "Task_{}".format(random_no)
+        path = "/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/" + \
+            "android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/" + \
+            "androidx.drawerlayout.widget.DrawerLayout/android.view.ViewGroup/" + \
+            "android.widget.FrameLayout[2]/android.widget.LinearLayout/android.view.ViewGroup/android.widget.EditText"
+        self.driver.find_element_by_xpath(path).send_keys(task_message)
+        # submit task
+        sleep(1.0)
+        el = self.driver.find_element_by_id("android:id/button1")
+        self._tap(el)
+        # close keyboard with back button
+        self.driver.press_keycode(4);
+        # search for test task in the list
+        path = "//android.widget.TextView[@text='{}']".format(task_message)
+        task_text_widget = self.driver.find_elements_by_xpath(path)
+        task_text_widget_size = len(task_text_widget)
+        self.assertEqual(task_text_widget_size, 1)
+        print("Task {} is created".format(task_message))
+        # get task object from api for testing following steps
+        params = {
+            "project_id": self.project.id
+        }
+        tasks = self.client.get_all(params)
+        sleep(1.0)
+        _task = None
+        for task in tasks:
+            if task.content == task_message:
+                _task = task
+                print("Task is found through API")
+                break
+        
+        # Step 4: complete test task
+        # assume the test task is in first list, we check the check box to complete
+        # search with full xpath
+        path = '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/' + \
+            'android.widget.FrameLayout/android.widget.FrameLayout/' + \
+            'android.widget.FrameLayout/androidx.drawerlayout.widget.DrawerLayout/' + \
+            'android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/' + \
+            'androidx.recyclerview.widget.RecyclerView/android.widget.FrameLayout[1]/' + \
+            'android.widget.RelativeLayout/android.widget.CheckBox'
+        el = self.driver.find_element_by_xpath(path)
+        self._tap(el)
+        # search again the test task, make sure it is not found now on the list
+        path = "//android.widget.TextView[@text='{}']".format(task_message)
+        task_text_widget = self.driver.find_elements_by_xpath(path)
+        task_text_widget_size = len(task_text_widget)
+        self.assertEqual(task_text_widget_size, 0)
+        print("Task {} is completed".format(task_message))
+        
+        # Step 5: reopen task with API
+        self.client.reopen(_task.id)
+        # search again the test task, make sure it is not found now on the list
+        path = "//android.widget.TextView[@text='{}']".format(task_message)
+        task_text_widget = self.driver.find_elements_by_xpath(path)
+        task_text_widget_size = len(task_text_widget)
+        self.assertEqual(task_text_widget_size, 1)
+        print("Task {} is reopened".format(task_message))
+        
         
