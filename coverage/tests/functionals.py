@@ -28,5 +28,4 @@ class FunctionalsUtil():
             test = obj.get_instance(test_case, token, username, password)
             suite.addTest(test)
         return suite
-        
-        
+       
