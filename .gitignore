@@ -1,4 +1,5 @@
 *.pyc 
 .vscode/*.json
+test_report/*.html
 *.apk
 .DS_Store
