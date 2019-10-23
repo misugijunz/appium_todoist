@@ -103,12 +103,12 @@ class FunctionalsTask(unittest.TestCase, Functionals):
         print("Task {} is created".format(task_message))
         
         # Step 2: Verify task is created through API
-        sleep(1.0)
+        sleep(5.0)
         params = {
             "project_id": self.project.id
         }
         tasks = self.client.get_all(params)
-        sleep(1.0)
+        sleep(5.0)
         found = False
         for task in tasks:
             if task.content == task_message:
@@ -189,12 +189,15 @@ class FunctionalsTask(unittest.TestCase, Functionals):
             'androidx.recyclerview.widget.RecyclerView/android.widget.FrameLayout[1]/' + \
             'android.widget.RelativeLayout/android.widget.CheckBox'
         el = self.driver.find_element_by_xpath(path)
+        
         self._tap(el)
         # search again the test task, make sure it is not found now on the list
-        path = "//android.widget.TextView[@text='{}']".format(task_message)
-        task_text_widget = self.driver.find_elements_by_xpath(path)
+        # path = "//android.widget.TextView[@text='{}']".format(task_message)
+        sleep(1.0)
+        task_text_widgets = self.driver.find_element_by_class_name("android.widget.TextView")
+        texts = [el.text for el in task_text_widgets if el.text == task_message]
         task_text_widget_size = len(task_text_widget)
-        self.assertEqual(task_text_widget_size, 0)
+        self.assertEqual(len(texts), 0)
         print("Task {} is completed".format(task_message))
         
         # Step 5: reopen task with API
