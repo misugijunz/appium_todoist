@@ -75,14 +75,14 @@ class ProjectsClient(AbstractClient):
         _header["X-Request-Id"] = str(uuid.uuid4())
         resp = requests.post(api_url,
                              data=json.dumps(params),
-                             headers=_header).json()
+                             headers=_header)
         return resp
 
     def delete(self, id):
         api_url = self.base_url + "projects"
         api_url = api_url + "/" + id
         resp = projects_arr = requests.delete(api_url,
-                                              headers=self.headers).json()
+                                              headers=self.headers)
         return resp
         
     def _create_project_instance(self, dict):
@@ -135,28 +135,28 @@ class TasksClient(AbstractClient):
         _header["X-Request-Id"] = str(uuid.uuid4())
         resp = requests.post(api_url,
                              data=json.dumps(params),
-                             headers=_header).json()
+                             headers=_header)
         return resp
 
     def delete(self, id):
         api_url = self.base_url + "tasks"
         api_url = api_url + "/{}".format(id)
         resp = requests.delete(api_url,
-                               headers=self.headers).json()
+                               headers=self.headers)
         return resp
     
     def close(self, id):
         api_url = self.base_url + "tasks"
         api_url = api_url + "/{}/close".format(id)
         resp = requests.delete(api_url,
-                               headers=self.headers).json()
+                               headers=self.headers)
         return resp
     
     def reopen(self, id):
         api_url = self.base_url + "tasks"
         api_url = api_url + "/{}/reopen".format(id)
         resp = requests.delete(api_url,
-                               headers=self.headers).json()
+                               headers=self.headers)
         return resp
         
     def _create_task_instance(self, dict):

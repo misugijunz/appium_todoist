@@ -19,7 +19,7 @@ class Dues():
         self.timezone = timezone
     
     def __str__(self):
-        return self.name
+        return self.string
 
 class Tasks():
     def __init__(self, id, project_id,
@@ -40,4 +40,5 @@ class Tasks():
         self.comment_count = comment_count
 
     def __str__(self):
-        return self.name
+        str_ret = "{}_{}".format(self.id, self.content)
+        return str_ret

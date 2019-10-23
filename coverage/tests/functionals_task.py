@@ -167,6 +167,7 @@ class FunctionalsTask(unittest.TestCase, Functionals):
         self.assertEqual(task_text_widget_size, 1)
         print("Task {} is created".format(task_message))
         # get task object from api for testing following steps
+        sleep(5.0)
         params = {
             "project_id": self.project.id
         }
@@ -178,6 +179,8 @@ class FunctionalsTask(unittest.TestCase, Functionals):
                 _task = task
                 print("Task is found through API")
                 break
+        sleep(5.0)
+        print(_task)
         
         # Step 4: complete test task
         # assume the test task is in first list, we check the check box to complete
@@ -193,16 +196,21 @@ class FunctionalsTask(unittest.TestCase, Functionals):
         self._tap(el)
         # search again the test task, make sure it is not found now on the list
         # path = "//android.widget.TextView[@text='{}']".format(task_message)
-        sleep(1.0)
-        task_text_widgets = self.driver.find_element_by_class_name("android.widget.TextView")
+        sleep(3.0)
+        task_text_widgets = self.driver.find_elements_by_class_name("android.widget.TextView")
         texts = [el.text for el in task_text_widgets if el.text == task_message]
         task_text_widget_size = len(task_text_widget)
         self.assertEqual(len(texts), 0)
         print("Task {} is completed".format(task_message))
         
         # Step 5: reopen task with API
-        self.client.reopen(_task.id)
+        resp = self.client.reopen(_task.id)
         # search again the test task, make sure it is not found now on the list
+        sleep(3.0)
+        # verify reopened task with status code
+        self.assertTrue"402" in resp.status_code)
+        
+        # Step 6: validate reopened task on mobile app
         path = "//android.widget.TextView[@text='{}']".format(task_message)
         task_text_widget = self.driver.find_elements_by_xpath(path)
         task_text_widget_size = len(task_text_widget)
