@@ -7,7 +7,7 @@ TEST_CASES = {
         "test_create_project"
     ],
     "tasks": [
-#        "test_create_task_from_mobile_phone",
+        "test_create_task_from_mobile_phone",
         "test_reopen_task"
     ]
 }

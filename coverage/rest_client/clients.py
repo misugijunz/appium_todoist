@@ -50,7 +50,7 @@ class ProjectsClient(AbstractClient):
     
     def get(self, id):
         api_url = self.base_url + "projects"
-        api_url = api_url + "/" + id
+        api_url = api_url + "/{}".format(id)
         project_dict = requests.get(api_url,
                                     headers=self.headers).json()
         project = self._create_project_instance(project_dict)
@@ -69,7 +69,7 @@ class ProjectsClient(AbstractClient):
 
     def update(self, id, params):
         api_url = self.base_url + "projects"
-        api_url = api_url + "/" + id
+        api_url = api_url + "/{}".format(id)
         _header = self.headers
         _header["Content-Type"] = "application/json"
         _header["X-Request-Id"] = str(uuid.uuid4())
@@ -80,7 +80,7 @@ class ProjectsClient(AbstractClient):
 
     def delete(self, id):
         api_url = self.base_url + "projects"
-        api_url = api_url + "/" + id
+        api_url = api_url + "/{}".format(id)
         resp = projects_arr = requests.delete(api_url,
                                               headers=self.headers)
         return resp
@@ -110,7 +110,7 @@ class TasksClient(AbstractClient):
         
     def get(self, id):
         api_url = self.base_url + "tasks"
-        api_url = api_url + "/" + id
+        api_url = api_url + "/{}".format(id)
         project_dict = requests.get(api_url,
                                     headers=self.headers).json()
         project = self._create_task_instance(project_dict)
@@ -129,7 +129,7 @@ class TasksClient(AbstractClient):
 
     def update(self, id, params):
         api_url = self.base_url + "tasks"
-        api_url = api_url + "/" + id
+        api_url = api_url + "/{}".format(id)
         _header = self.headers
         _header["Content-Type"] = "application/json"
         _header["X-Request-Id"] = str(uuid.uuid4())
@@ -148,15 +148,15 @@ class TasksClient(AbstractClient):
     def close(self, id):
         api_url = self.base_url + "tasks"
         api_url = api_url + "/{}/close".format(id)
-        resp = requests.delete(api_url,
-                               headers=self.headers)
+        resp = requests.post(api_url,
+                             headers=self.headers)
         return resp
     
     def reopen(self, id):
         api_url = self.base_url + "tasks"
         api_url = api_url + "/{}/reopen".format(id)
-        resp = requests.delete(api_url,
-                               headers=self.headers)
+        resp = requests.post(api_url,
+                             headers=self.headers)
         return resp
         
     def _create_task_instance(self, dict):

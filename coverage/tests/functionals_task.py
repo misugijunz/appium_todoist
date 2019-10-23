@@ -207,14 +207,17 @@ class FunctionalsTask(unittest.TestCase, Functionals):
         resp = self.client.reopen(_task.id)
         # search again the test task, make sure it is not found now on the list
         sleep(3.0)
-        # verify reopened task with status code
-        self.assertTrue("402" in resp.status_code)
+        # verify reopened task with status completed = False
+        # if 402 == resp.status_code:
+        _task = self.client.get(_task.id)
+        sleep(3.0)
+        self.assertFalse(_task.completed)
+        print("Task {} is reopened and completed value is False".format(task_message))
         
         # Step 6: validate reopened task on mobile app
         path = "//android.widget.TextView[@text='{}']".format(task_message)
         task_text_widget = self.driver.find_elements_by_xpath(path)
         task_text_widget_size = len(task_text_widget)
-        self.assertEqual(task_text_widget_size, 1)
-        print("Task {} is reopened".format(task_message))
-        
-        
+        self.assertGreater(task_text_widget_size, 0)
+        print("Task {} is reopened and can be seen at mobile app".format(task_message))
+                
