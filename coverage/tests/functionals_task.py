@@ -208,7 +208,7 @@ class FunctionalsTask(unittest.TestCase, Functionals):
         # search again the test task, make sure it is not found now on the list
         sleep(3.0)
         # verify reopened task with status code
-        self.assertTrue"402" in resp.status_code)
+        self.assertTrue("402" in resp.status_code)
         
         # Step 6: validate reopened task on mobile app
         path = "//android.widget.TextView[@text='{}']".format(task_message)
