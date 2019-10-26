@@ -13,9 +13,30 @@ from appium.webdriver.common.touch_action import TouchAction
 from selenium.common.exceptions import NoSuchElementException
 
 class FunctionalsProject(unittest.TestCase, Functionals):
+
+    """It is a testware class for Projects tests
+    
+    The class defines behaviour of automation tests for Projects.
+    """
     
     @staticmethod
     def get_instance(testcase, token, username, password):
+        """Create instance of this test
+        
+        Singleton-styled object instantiation of this class for dynamic
+        object creation without specifying type construction. Static method
+        
+        :param testcase: testcase name to be invoked
+        :param token: token to auth the API call
+        :param username: username used for login
+        :param password: password used for login
+        :type testcase: string
+        :type token: string
+        :type username: string
+        :type password: string
+        :return: object of FunctionalsTask testware class
+        :rtype: FunctionalsTask
+        """
         obj = FunctionalsProject(testcase)
         obj.set_token(token)
         obj.set_username(username)
@@ -23,6 +44,12 @@ class FunctionalsProject(unittest.TestCase, Functionals):
         return obj
     
     def _tap(self, el):
+        """Tap a refered element on app
+        
+        Internal method to perform tap on specified element
+        
+        :param el: referred element for tap to be performed
+        """
         actions = TouchAction(self.driver)
         actions.tap(el)
         actions.perform()
