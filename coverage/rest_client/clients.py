@@ -254,7 +254,7 @@ class TasksClient(AbstractClient):
         api_url = self.base_url + "tasks"
         api_url = api_url + "/{}".format(id)
         task_dict = requests.get(api_url,
-                                    headers=self.headers).json()
+                                 headers=self.headers).json()
         task = self._create_task_instance(task_dict)
         return task
     
